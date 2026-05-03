@@ -1,0 +1,82 @@
+[
+  {
+    "_id": "660000000000000000000301",
+    "userId": "660000000000000000000101",
+    "items": [
+      {
+        "productId": "660000000000000000000203",
+        "quantity": 1,
+        "price": 4.50
+      },
+      {
+        "productId": "660000000000000000000219",
+        "quantity": 1,
+        "price": 3.50
+      }
+    ],
+    "totalAmount": 8.00,
+    "orderStatus": "Ready",
+    "paymentScreenshotUrl": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&q=80"
+  },
+  {
+    "_id": "660000000000000000000302",
+    "userId": "660000000000000000000103",
+    "items": [
+      {
+        "productId": "660000000000000000000214",
+        "quantity": 2,
+        "price": 5.25
+      }
+    ],
+    "totalAmount": 10.50,
+    "orderStatus": "Brewing",
+    "paymentScreenshotUrl": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&q=80"
+  },
+  {
+    "_id": "660000000000000000000303",
+    "userId": "660000000000000000000107",
+    "items": [
+      {
+        "productId": "660000000000000000000210",
+        "quantity": 1,
+        "price": 5.00
+      },
+      {
+        "productId": "660000000000000000000224",
+        "quantity": 1,
+        "price": 6.50
+      }
+    ],
+    "totalAmount": 11.50,
+    "orderStatus": "Pending",
+    "paymentScreenshotUrl": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&q=80"
+  },
+  {
+    "_id": "660000000000000000000304",
+    "userId": "660000000000000000000109",
+    "items": [
+      {
+        "productId": "660000000000000000000201",
+        "quantity": 4,
+        "price": 3.00
+      }
+    ],
+    "totalAmount": 12.00,
+    "orderStatus": "Ready",
+    "paymentScreenshotUrl": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&q=80"
+  },
+  {
+    "_id": "660000000000000000000305",
+    "userId": "660000000000000000000102",
+    "items": [
+      {
+        "productId": "660000000000000000000220",
+        "quantity": 2,
+        "price": 4.00
+      }
+    ],
+    "totalAmount": 8.00,
+    "orderStatus": "Pending",
+    "paymentScreenshotUrl": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&q=80"
+  }
+]

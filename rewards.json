@@ -1,0 +1,26 @@
+[
+  {
+    "_id": "660000000000000000000501",
+    "rewardName": "Free Espresso Shot",
+    "pointsRequired": 50,
+    "description": "Add an extra shot to any drink for free.",
+    "rewardImageUrl": "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000502",
+    "rewardName": "Free Pastry",
+    "pointsRequired": 150,
+    "description": "Redeem for any pastry from our bakery case.",
+    "rewardImageUrl": "https://images.unsplash.com/photo-1549996647-190b679b33d7?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000503",
+    "rewardName": "Ember Coffee Mug",
+    "pointsRequired": 500,
+    "description": "Take home our signature ceramic travel mug.",
+    "rewardImageUrl": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=400&q=80",
+    "isAvailable": true
+  }
+]

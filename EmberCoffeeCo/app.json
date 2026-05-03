@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "EMBER Coffee Co",
+    "slug": "EmberCoffeeCo",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "android": {
+      "package": "com.nalinakr.embercoffeeco",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#1A1A1A"
+      }
+    },
+    "plugins": [
+      "expo-font",
+      "@react-native-community/datetimepicker"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "7d892629-a40a-4ed1-8110-6a799cf0019f"
+      }
+    }
+  }
+}

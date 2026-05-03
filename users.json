@@ -1,0 +1,110 @@
+[
+  {
+    "_id": "660000000000000000000001",
+    "name": "Ranasinghe R.M.N.K.",
+    "email": "admin1@ember.com",
+    "passwordHash": "password123",
+    "role": "admin",
+    "profileImageUrl": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80",
+    "totalPoints": 0
+  },
+  {
+    "_id": "660000000000000000000002",
+    "name": "Jane Doe",
+    "email": "admin2@ember.com",
+    "passwordHash": "password123",
+    "role": "admin",
+    "profileImageUrl": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80",
+    "totalPoints": 0
+  },
+  {
+    "_id": "660000000000000000000101",
+    "name": "Alex Johnson",
+    "email": "alex@example.com",
+    "passwordHash": "password123",
+    "role": "customer",
+    "profileImageUrl": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80",
+    "totalPoints": 150
+  },
+  {
+    "_id": "660000000000000000000102",
+    "name": "Brian Smith",
+    "email": "brian@example.com",
+    "passwordHash": "password123",
+    "role": "customer",
+    "profileImageUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
+    "totalPoints": 45
+  },
+  {
+    "_id": "660000000000000000000103",
+    "name": "Chloe Adams",
+    "email": "chloe@example.com",
+    "passwordHash": "password123",
+    "role": "customer",
+    "profileImageUrl": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=80",
+    "totalPoints": 300
+  },
+  {
+    "_id": "660000000000000000000104",
+    "name": "David Clark",
+    "email": "david@example.com",
+    "passwordHash": "password123",
+    "role": "customer",
+    "profileImageUrl": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=400&q=80",
+    "totalPoints": 0
+  },
+  {
+    "_id": "660000000000000000000105",
+    "name": "Emma Wilson",
+    "email": "emma@example.com",
+    "passwordHash": "password123",
+    "role": "customer",
+    "profileImageUrl": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&q=80",
+    "totalPoints": 120
+  },
+  {
+    "_id": "660000000000000000000106",
+    "name": "Frank Thomas",
+    "email": "frank@example.com",
+    "passwordHash": "password123",
+    "role": "customer",
+    "profileImageUrl": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80",
+    "totalPoints": 80
+  },
+  {
+    "_id": "660000000000000000000107",
+    "name": "Grace Lee",
+    "email": "grace@example.com",
+    "passwordHash": "password123",
+    "role": "customer",
+    "profileImageUrl": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&q=80",
+    "totalPoints": 210
+  },
+  {
+    "_id": "660000000000000000000108",
+    "name": "Henry White",
+    "email": "henry@example.com",
+    "passwordHash": "password123",
+    "role": "customer",
+    "profileImageUrl": "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=400&q=80",
+    "totalPoints": 10
+  },
+  {
+    "_id": "660000000000000000000109",
+    "name": "Isabella Martinez",
+    "email": "isabella@example.com",
+    "passwordHash": "password123",
+    "role": "customer",
+    "profileImageUrl": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&q=80",
+    "totalPoints": 500
+  },
+  {
+    "_id": "660000000000000000000110",
+    "name": "Jack Taylor",
+    "email": "jack@example.com",
+    "passwordHash": "password123",
+    "role": "customer",
+    "profileImageUrl": "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=400&q=80",
+    "totalPoints": 65
+  }
+]

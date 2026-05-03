@@ -1,0 +1,281 @@
+[
+  {
+    "_id": "660000000000000000000201",
+    "productName": "Pistachio-Rose Velvet Latte",
+    "category": "Signature Brews",
+    "price": 6.50,
+    "description": "Our most popular signature drink. A house-made pistachio butter base paired with delicate rose water and honey syrup, topped with espresso and velvety steamed milk. Rich, nutty, and highly aromatic without being overly sweet.",
+    "productImageUrl": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000202",
+    "productName": "Spiced South Indian Mocha",
+    "category": "Signature Brews",
+    "price": 6.00,
+    "description": "A comforting fusion of roasted South Indian filter coffee decoction and dark cocoa, finished with a warming pinch of cinnamon, nutmeg, and dry ginger. A beautifully spiced take on the traditional mocha.",
+    "productImageUrl": "https://images.unsplash.com/photo-1542451313056-b7c8e626645f?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000203",
+    "productName": "Salted Caramel Nitro Brew",
+    "category": "Signature Brews",
+    "price": 5.75,
+    "description": "Our 20-hour steeped cold brew infused with nitrogen for a cascading, creamy texture. Swirled with house-made dark caramel sauce and finished with a pinch of flaky sea salt for an addictive sweet-salty balance.",
+    "productImageUrl": "https://images.unsplash.com/photo-1559525839-b184a4d698c7?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000204",
+    "productName": "Havana Coconut Latte",
+    "category": "Signature Brews",
+    "price": 6.25,
+    "description": "A tropical escape in a cup. A double shot of espresso blended with silky coconut cream, condensed milk, vanilla, and a hint of star anise. Served hot with toasted coconut flakes on top.",
+    "productImageUrl": "https://images.unsplash.com/photo-1554372562-b91c0628280f?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000205",
+    "productName": "Golden Turmeric Honey Latte",
+    "category": "Signature Brews",
+    "price": 5.50,
+    "description": "An immune-boosting, caffeine-free alternative (or add an espresso shot!). Steamed oat milk infused with our vibrant turmeric spice blend, fresh ginger, cinnamon, and raw organic honey.",
+    "productImageUrl": "https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000206",
+    "productName": "The Ember \"Mont Blanc\"",
+    "category": "Signature Brews",
+    "price": 6.75,
+    "description": "A curated cold brew experience. Premium single-origin cold brew poured over ice and agave, elegantly topped with a thick layer of whipped sweet double cream, freshly grated nutmeg, and grapefruit zest.",
+    "productImageUrl": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000207",
+    "productName": "Classic Double Espresso",
+    "category": "Espresso",
+    "price": 3.00,
+    "description": "A pristine double shot of our signature Ember dark roast, pulling complex notes of dark cocoa and toasted hazelnut with a perfectly thick, golden crema.",
+    "productImageUrl": "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000208",
+    "productName": "Cafe Americano",
+    "category": "Espresso",
+    "price": 3.50,
+    "description": "Two shots of rich espresso poured gracefully over 180°F filtered water. A smooth, robust, and full-bodied cup that highlights the nuanced flavors of our house blend.",
+    "productImageUrl": "https://images.unsplash.com/photo-1554372562-b91c0628280f?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000209",
+    "productName": "Artisan Cafe Latte",
+    "category": "Espresso",
+    "price": 4.50,
+    "description": "A harmonious balance of bold espresso and sweet, steamed milk, carefully poured to create a light layer of micro-foam and beautiful latte art.",
+    "productImageUrl": "https://images.unsplash.com/photo-1570968915860-54d5c301fa9f?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000210",
+    "productName": "Traditional Cappuccino",
+    "category": "Espresso",
+    "price": 4.50,
+    "description": "Crafted in the true Italian style. Equal thirds of intense espresso, steamed milk, and a deep, airy layer of thick milk foam. Dusted with cocoa powder upon request.",
+    "productImageUrl": "https://images.unsplash.com/photo-1534687941688-651ccaafbff8?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000211",
+    "productName": "Madagascar Vanilla Macchiato",
+    "category": "Espresso",
+    "price": 5.00,
+    "description": "Steamed milk infused with real Madagascar vanilla bean syrup, marked with a bold shot of espresso poured directly through the foam, and finished with a caramel crosshatch.",
+    "productImageUrl": "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000212",
+    "productName": "Rich Dark Mocha",
+    "category": "Espresso",
+    "price": 5.00,
+    "description": "A decadent blend of our signature espresso, bittersweet dark chocolate ganache, and steamed milk. A sophisticated treat for coffee and chocolate lovers alike.",
+    "productImageUrl": "https://images.unsplash.com/photo-1529892485617-25f63cd7b1e9?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000213",
+    "productName": "Flat White",
+    "category": "Espresso",
+    "price": 4.25,
+    "description": "Two concentrated ristretto shots of espresso folded intimately with velvety, sweet steamed whole milk. A stronger coffee flavor than a latte with a uniquely smooth texture.",
+    "productImageUrl": "https://images.unsplash.com/photo-1585494156145-1c60a4fa3e90?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000214",
+    "productName": "Cortado",
+    "category": "Espresso",
+    "price": 4.00,
+    "description": "A perfect 1:1 ratio. A double shot of espresso cut exactly with an equal amount of lightly steamed milk to reduce the acidity while retaining the coffee's powerful character.",
+    "productImageUrl": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000215",
+    "productName": "Masala Chai Tea Latte",
+    "category": "Tea",
+    "price": 4.50,
+    "description": "Bold black tea heavily infused with a fragrant mix of cardamom, cinnamon, black pepper, and star anise, combined with steamed milk for a warming, spicy-sweet profile.",
+    "productImageUrl": "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000216",
+    "productName": "Matcha Green Tea Latte",
+    "category": "Tea",
+    "price": 5.00,
+    "description": "Ceremonial-grade, stone-ground Japanese matcha powder, lightly sweetened with cane sugar and whisked vigorously into hot steamed milk for an earthy, antioxidant-rich lift.",
+    "productImageUrl": "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000217",
+    "productName": "Earl Grey London Fog",
+    "category": "Tea",
+    "price": 4.25,
+    "description": "A cozy, aromatic classic. Bright, citrusy Earl Grey tea steeped strong, sweetened with a touch of vanilla syrup, and topped with a thick cap of steamed milk.",
+    "productImageUrl": "https://images.unsplash.com/photo-1558160074-4d7d8bdf4256?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000218",
+    "productName": "Chamomile Citrus Infusion",
+    "category": "Tea",
+    "price": 3.50,
+    "description": "A soothing, caffeine-free herbal blend of whole Egyptian chamomile flowers, sweet orange peel, and a hint of lemongrass. Perfect for relaxing afternoon sipping.",
+    "productImageUrl": "https://images.unsplash.com/photo-1597481499750-3e6b22637e12?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000219",
+    "productName": "Classic Iced Latte",
+    "category": "Iced Drinks",
+    "price": 4.75,
+    "description": "Freshly pulled espresso shots chilled rapidly over ice and topped with your choice of cold milk. A refreshing, coffee-forward staple for warm days.",
+    "productImageUrl": "https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000220",
+    "productName": "Iced Americano",
+    "category": "Iced Drinks",
+    "price": 3.75,
+    "description": "Crisp, bold, and fiercely caffeinated. Two shots of espresso poured over ice and topped with cold filtered water to preserve the coffee's dark, rich crema.",
+    "productImageUrl": "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000221",
+    "productName": "House Cold Brew",
+    "category": "Iced Drinks",
+    "price": 4.50,
+    "description": "Coarse-ground single-origin beans steeped in cool, filtered water for exactly 20 hours. This slow extraction produces a remarkably smooth coffee with naturally sweet chocolate notes and zero bitterness.",
+    "productImageUrl": "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000222",
+    "productName": "Iced Vanilla Macchiato",
+    "category": "Iced Drinks",
+    "price": 5.25,
+    "description": "Cold milk mixed with vanilla syrup and poured over ice, layered with floating shots of dark espresso, and finished with a generous drizzle of buttery caramel.",
+    "productImageUrl": "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000223",
+    "productName": "Iced Dark Mocha",
+    "category": "Iced Drinks",
+    "price": 5.25,
+    "description": "Espresso and bittersweet chocolate ganache dissolved together, mixed with cold milk, and served over ice. The ultimate chilled chocolate-coffee indulgence.",
+    "productImageUrl": "https://images.unsplash.com/photo-1542451313056-b7c8e626645f?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000224",
+    "productName": "Mocha Frappe Blend",
+    "category": "Iced Drinks",
+    "price": 5.50,
+    "description": "Our signature cold brew concentrate blended with milk, ice, and rich mocha syrup until perfectly frosty. Topped with whipped cream and chocolate shavings.",
+    "productImageUrl": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000225",
+    "productName": "Caramel Frappe Blend",
+    "category": "Iced Drinks",
+    "price": 5.50,
+    "description": "A frosty, blended treat featuring coffee roast, milk, ice, and sweet caramel syrup. Crowned with whipped cream and a thick caramel ribbon.",
+    "productImageUrl": "https://images.unsplash.com/photo-1588623696803-ccb392d4f29a?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000226",
+    "productName": "Artisanal Butter Croissant",
+    "category": "Pastries",
+    "price": 3.50,
+    "description": "Imported French butter folded through countless layers of dough, baked fresh daily until deeply golden and shatteringly crisp on the outside, yet soft and airy inside.",
+    "productImageUrl": "https://images.unsplash.com/photo-1549996647-190b679b33d7?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000227",
+    "productName": "Dark Chocolate Pain au Chocolat",
+    "category": "Pastries",
+    "price": 4.00,
+    "description": "Our signature flaky, buttery croissant dough wrapped around two thick batons of premium, semi-sweet Belgian dark chocolate. Best enjoyed slightly warmed.",
+    "productImageUrl": "https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000228",
+    "productName": "Lemon Blueberry Streusel Muffin",
+    "category": "Pastries",
+    "price": 3.75,
+    "description": "A tender, moist muffin bursting with wild blueberries and bright lemon zest, crowned with a crunchy, buttery brown-sugar streusel topping.",
+    "productImageUrl": "https://images.unsplash.com/photo-1557925923-33b251dc32a6?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000229",
+    "productName": "Toasted Walnut Banana Bread",
+    "category": "Pastries",
+    "price": 3.50,
+    "description": "A thick, comforting slice of incredibly moist banana bread, made with overripe bananas, warm cinnamon, and generous chunks of toasted walnuts.",
+    "productImageUrl": "https://images.unsplash.com/photo-1563227443-41e779a95781?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000230",
+    "productName": "Sea Salt Chocolate Chunk Cookie",
+    "category": "Pastries",
+    "price": 2.50,
+    "description": "A massive, bakery-style cookie with crispy edges and a chewy, gooey center. Packed with puddles of dark chocolate chunks and finished with Maldon sea salt.",
+    "productImageUrl": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=400&q=80",
+    "isAvailable": true
+  },
+  {
+    "_id": "660000000000000000000231",
+    "productName": "Smashed Avocado Sourdough Toast",
+    "category": "Pastries",
+    "price": 6.50,
+    "description": "A thick-cut slice of rustic, toasted sourdough bread loaded with fresh, lemon-spiked smashed avocado, sprinkled with everything-bagel seasoning and micro-greens.",
+    "productImageUrl": "https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?w=400&q=80",
+    "isAvailable": true
+  }
+]
