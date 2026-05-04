@@ -1,0 +1,707 @@
+# Design Document: Ember Coffee Co.
+
+---
+
+## Overview
+
+Ember Coffee Co. is a full-stack mobile application that digitises the operations of a coffee shop. The system consists of a React Native mobile client and a Node.js + Express.js RESTful backend connected to a MongoDB Atlas database. Six modules are divided across team members: authentication, product management, order processing, loyalty rewards, customer reviews, and promotions with deployment.
+
+The backend follows an MVC pattern: routes delegate to controllers, controllers interact with Mongoose models, and shared middleware handles cross-cutting concerns (JWT auth, file uploads, error handling). The React Native frontend uses functional components, hooks, and React Navigation for screen management.
+
+---
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     React Native App                            │
+│  React Navigation Stack / Tab Navigator                         │
+│  Screens: Auth, Menu, Cart, Orders, Rewards, Reviews, Promos    │
+│  State: useState / useContext (AuthContext, CartContext)         │
+└────────────────────────┬────────────────────────────────────────┘
+                         │ HTTPS REST (JSON)
+                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                  Express.js Server (server.js)                  │
+│                                                                 │
+│  Middleware Stack (applied in order):                           │
+│  1. express.json()          – parse JSON bodies                 │
+│  2. cors()                  – allow mobile client origin        │
+│  3. /api/auth               – authRoutes                        │
+│  4. /api/products           – productRoutes                     │
+│  5. /api/orders             – orderRoutes                       │
+│  6. /api/rewards            – rewardRoutes                      │
+│  7. /api/reviews            – reviewRoutes                      │
+│  8. /api/promotions         – promoRoutes                       │
+│  9. errorMiddleware         – global error handler (last)       │
+└────────────────────────┬────────────────────────────────────────┘
+                         │ Mongoose ODM
+                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     MongoDB Atlas                               │
+│  Collections: users, products, orders, rewards,                 │
+│               redemptions, reviews, promotions                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Key Architectural Decisions
+
+- **Stateless JWT auth**: No server-side sessions. Every protected request carries a Bearer token in the `Authorization` header. The `protect` middleware verifies the token and attaches `req.user` for downstream controllers.
+- **Role-based access**: A second `adminOnly` middleware checks `req.user.role === 'admin'` and returns 403 otherwise. Routes compose these: `router.post('/', protect, adminOnly, createProduct)`.
+- **Multer for uploads**: Files are stored in the local `uploads/` directory (served as static files). The `uploadMiddleware` is a pre-configured Multer instance with MIME-type filtering and a 5 MB size limit. Each upload route applies this middleware before its controller.
+- **Global error handler**: All controllers use `next(error)` to forward errors. The `errorMiddleware` at the end of the middleware stack formats and returns a consistent JSON error response.
+- **Embedded order items**: The `Order` model embeds an `items[]` array (productId ref + quantity + price snapshot) rather than a separate collection, keeping order reads to a single query.
+- **Separate Redemption collection**: Redemption records are stored in their own collection (not embedded in User) to support querying redemption history independently.
+
+---
+
+## Components and Interfaces
+
+### Backend Components
+
+#### server.js
+
+Entry point. Connects to MongoDB via `config/db.js`, registers middleware, mounts all route modules, and starts the HTTP server.
+
+```js
+// Route mounting pattern
+app.use('/api/auth',       authRoutes);
+app.use('/api/products',   productRoutes);
+app.use('/api/orders',     orderRoutes);
+app.use('/api/rewards',    rewardRoutes);
+app.use('/api/reviews',    reviewRoutes);
+app.use('/api/promotions', promoRoutes);
+app.use(errorMiddleware); // must be last
+app.use('/uploads', express.static('uploads')); // serve uploaded files
+```
+
+#### authMiddleware.js
+
+Two exported functions:
+
+```js
+// protect: verifies JWT, attaches req.user = { id, role }
+export const protect = async (req, res, next) => { ... }
+
+// adminOnly: checks req.user.role, must be used after protect
+export const adminOnly = (req, res, next) => {
+  if (req.user.role !== 'admin') return res.status(403).json({ message: 'Admin access required' });
+  next();
+}
+```
+
+#### uploadMiddleware.js
+
+Single Multer instance shared across all upload routes:
+
+```js
+const storage = multer.diskStorage({
+  destination: 'uploads/',
+  filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`)
+});
+
+const fileFilter = (req, file, cb) => {
+  const allowed = ['image/jpeg', 'image/png'];
+  allowed.includes(file.mimetype) ? cb(null, true) : cb(new Error('Only JPEG and PNG allowed'), false);
+};
+
+export default multer({ storage, fileFilter, limits: { fileSize: 5 * 1024 * 1024 } });
+```
+
+#### errorMiddleware.js
+
+Global error handler — must be the last `app.use()` call:
+
+```js
+export const errorMiddleware = (err, req, res, next) => {
+  const status = err.status || 500;
+  res.status(status).json({ message: err.message || 'Internal server error' });
+  if (status === 500) console.error(err);
+};
+```
+
+#### Route → Controller Pattern (example: productRoutes.js)
+
+```js
+import { protect, adminOnly } from '../middleware/authMiddleware.js';
+import upload from '../middleware/uploadMiddleware.js';
+import { getProducts, getProductById, createProduct, updateProduct, deleteProduct, uploadProductImage } from '../controllers/productController.js';
+
+router.get('/',           getProducts);
+router.get('/:id',        getProductById);
+router.post('/',          protect, adminOnly, createProduct);
+router.put('/:id',        protect, adminOnly, updateProduct);
+router.delete('/:id',     protect, adminOnly, deleteProduct);
+router.post('/:id/upload',protect, adminOnly, upload.single('image'), uploadProductImage);
+```
+
+All other route files follow the same composition pattern.
+
+### React Native Components
+
+#### Navigation Structure
+
+```
+RootNavigator
+├── AuthStack (unauthenticated)
+│   ├── LoginScreen
+│   └── RegisterScreen
+└── AppTabs (authenticated, Bottom Tab Navigator)
+    ├── MenuStack
+    │   ├── MenuScreen          (product list grouped by category)
+    │   └── ProductDetailScreen (product info + reviews + review form)
+    ├── CartStack
+    │   ├── CartScreen
+    │   └── CheckoutScreen      (summary + promo code + payment upload)
+    ├── OrdersScreen            (order history + status)
+    ├── RewardsScreen           (points balance + reward list)
+    └── ProfileScreen           (name, email, points, profile image)
+```
+
+Admin users see an additional `AdminStack` tab:
+- `AdminProductsScreen` (list + add/edit form)
+- `AdminOrdersScreen` (all orders + status update)
+- `AdminRewardsScreen` (list + add/edit form)
+- `AdminPromotionsScreen` (list + add/edit form)
+
+#### API Base URL Configuration
+
+```js
+// src/config/api.js
+const DEV_URL  = 'http://192.168.x.x:5000';   // local machine IP for device testing
+const PROD_URL = 'https://ember-coffee-api.onrender.com';
+
+export const BASE_URL = __DEV__ ? DEV_URL : PROD_URL;
+```
+
+All API calls import `BASE_URL` from this single file. Switching environments requires changing only this file.
+
+#### AuthContext
+
+Wraps the app and provides `{ user, token, login, logout }`. On login, the JWT is stored via `AsyncStorage` and attached to all Axios requests via a default header:
+
+```js
+axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+```
+
+#### CartContext
+
+Local state only (no backend persistence). Provides `{ items, addItem, removeItem, clearCart, total }`.
+
+---
+
+## Data Models
+
+### User.js
+
+```js
+const userSchema = new Schema({
+  name:            { type: String, required: true },
+  email:           { type: String, required: true, unique: true, lowercase: true },
+  passwordHash:    { type: String, required: true },
+  role:            { type: String, enum: ['customer', 'admin'], default: 'customer' },
+  profileImageUrl: { type: String, default: '' },
+  totalPoints:     { type: Number, default: 0, min: 0 },
+}, { timestamps: true });
+```
+
+`totalPoints` is the single source of truth for a customer's loyalty balance. It is decremented atomically during redemption using `findByIdAndUpdate` with `$inc`.
+
+### Product.js
+
+```js
+const productSchema = new Schema({
+  productName:    { type: String, required: true },
+  category:       { type: String, required: true },
+  price:          { type: Number, required: true, min: 0 },
+  description:    { type: String, default: '' },
+  productImageUrl:{ type: String, default: '' },
+  isAvailable:    { type: Boolean, default: true },
+}, { timestamps: true });
+```
+
+### Order.js
+
+```js
+const orderItemSchema = new Schema({
+  productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
+  quantity:  { type: Number, required: true, min: 1 },
+  price:     { type: Number, required: true },  // snapshot at time of order
+}, { _id: false });
+
+const orderSchema = new Schema({
+  userId:               { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  items:                { type: [orderItemSchema], required: true },
+  totalAmount:          { type: Number, required: true },
+  orderStatus:          { type: String, enum: ['Pending', 'Brewing', 'Ready'], default: 'Pending' },
+  paymentScreenshotUrl: { type: String, default: '' },
+}, { timestamps: true });
+```
+
+The `price` field in each item is a snapshot — it captures the product price at the time of ordering so that future price changes do not retroactively alter order totals.
+
+### Reward.js
+
+```js
+const rewardSchema = new Schema({
+  rewardName:    { type: String, required: true },
+  pointsRequired:{ type: Number, required: true, min: 1 },
+  description:   { type: String, default: '' },
+  rewardImageUrl:{ type: String, default: '' },
+  isAvailable:   { type: Boolean, default: true },
+}, { timestamps: true });
+```
+
+### Redemption.js
+
+```js
+const redemptionSchema = new Schema({
+  userId:     { type: Schema.Types.ObjectId, ref: 'User',   required: true },
+  rewardId:   { type: Schema.Types.ObjectId, ref: 'Reward', required: true },
+  pointsUsed: { type: Number, required: true },
+  redeemedAt: { type: Date,   default: Date.now },
+}, { timestamps: false });
+```
+
+Stored as a separate collection to allow querying a user's full redemption history without loading the User document.
+
+### Review.js
+
+```js
+const reviewSchema = new Schema({
+  userId:       { type: Schema.Types.ObjectId, ref: 'User',    required: true },
+  productId:    { type: Schema.Types.ObjectId, ref: 'Product', required: true },
+  rating:       { type: Number, required: true, min: 1, max: 5 },
+  comment:      { type: String, default: '' },
+  reviewImageUrl:{ type: String, default: '' },
+}, { timestamps: true });
+```
+
+### Promotion.js
+
+```js
+const promotionSchema = new Schema({
+  promoCode:         { type: String, required: true, unique: true, uppercase: true },
+  discountPercent:   { type: Number, required: true, min: 1, max: 100 },
+  validUntil:        { type: Date,   required: true },
+  promoBannerUrl:    { type: String, default: '' },
+}, { timestamps: true });
+```
+
+### Point Deduction Flow (Redemption)
+
+The redemption controller executes the following steps in sequence. Because MongoDB does not support multi-document ACID transactions in the free Atlas tier without a replica set, the flow is designed to be safe via ordered operations and explicit rollback on failure:
+
+```
+POST /api/rewards/:id/redeem
+  1. Find Reward by id → 404 if not found
+  2. Check reward.isAvailable → 400 if false
+  3. Find User by req.user.id
+  4. Check user.totalPoints >= reward.pointsRequired → 400 if insufficient
+  5. Deduct points:
+       await User.findByIdAndUpdate(userId, { $inc: { totalPoints: -reward.pointsRequired } })
+  6. Create Redemption record:
+       await Redemption.create({ userId, rewardId, pointsUsed: reward.pointsRequired })
+  7. Return HTTP 200 with updated totalPoints
+  (If step 6 fails after step 5, log the error and attempt to restore points via a compensating $inc)
+```
+
+Using `$inc` for the deduction is atomic at the document level, preventing race conditions where two simultaneous redemption requests could both pass the balance check.
+
+
+---
+
+## Correctness Properties
+
+*A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
+
+### Property 1: New user initialisation invariant
+
+*For any* valid registration payload (name, email, password), the created User document should have `role === "customer"` and `totalPoints === 0`.
+
+**Validates: Requirements 1.1, 8.1**
+
+---
+
+### Property 2: Password is never stored in plaintext
+
+*For any* registration request with any password string, the stored `passwordHash` field should not equal the original password string, and `bcrypt.compare(password, passwordHash)` should return `true`.
+
+**Validates: Requirements 1.2**
+
+---
+
+### Property 3: Missing required fields are rejected with 400
+
+*For any* create or update request to any resource endpoint (user, product, reward, review, promotion) where one or more required fields are absent, the API should return HTTP 400.
+
+**Validates: Requirements 1.4, 5.6, 8.7**
+
+---
+
+### Property 4: Client-side form validation rejects invalid inputs
+
+*For any* input string that is empty, composed entirely of whitespace, has an invalid email format, or has a password shorter than 8 characters, the client-side validation function should return an error and prevent form submission.
+
+**Validates: Requirements 1.5, 8.14**
+
+---
+
+### Property 5: Login with valid credentials returns a well-formed JWT
+
+*For any* registered user, submitting their correct email and password should return HTTP 200 with a JWT that, when decoded, contains the user's `userId` and `role`.
+
+**Validates: Requirements 2.1**
+
+---
+
+### Property 6: Login with invalid credentials returns 401
+
+*For any* email/password combination where the email does not exist or the password does not match, the login endpoint should return HTTP 401.
+
+**Validates: Requirements 2.2**
+
+---
+
+### Property 7: Protected routes reject requests without a valid JWT
+
+*For any* protected API endpoint, a request made without an `Authorization` header (or with an invalid/expired token) should return HTTP 401.
+
+**Validates: Requirements 2.4, 3.5, 6.5**
+
+---
+
+### Property 8: Profile update persists changes
+
+*For any* authenticated user and any valid update payload (new name or new profileImageUrl), after a successful PUT to `/api/auth/profile`, a subsequent GET to `/api/auth/profile` should return the updated values.
+
+**Validates: Requirements 3.1**
+
+---
+
+### Property 9: Resource list endpoints return only available items
+
+*For any* collection of products or rewards with mixed `isAvailable` values, the corresponding GET list endpoint should return only documents where `isAvailable === true`.
+
+**Validates: Requirements 4.1, 8.3**
+
+---
+
+### Property 10: Fetch by ID returns full resource details
+
+*For any* resource (product, reward, promotion) that exists in the database, fetching it by its `_id` should return all defined schema fields with their stored values.
+
+**Validates: Requirements 4.2, 8.2**
+
+---
+
+### Property 11: Admin resource creation is retrievable
+
+*For any* valid resource payload submitted by an authenticated admin, after a successful POST (HTTP 201), the created resource should be retrievable by its returned `_id` with matching field values.
+
+**Validates: Requirements 5.1, 8.2, 10.1**
+
+---
+
+### Property 12: Admin resource update persists changes
+
+*For any* existing resource and any valid update payload submitted by an authenticated admin, after a successful PUT (HTTP 200), a subsequent GET should return the updated field values.
+
+**Validates: Requirements 5.2, 8.4, 10.3**
+
+---
+
+### Property 13: Admin resource deletion removes the resource
+
+*For any* existing resource deleted by an authenticated admin (HTTP 200), a subsequent GET by that resource's `_id` should return HTTP 404.
+
+**Validates: Requirements 5.3, 8.5, 10.4**
+
+---
+
+### Property 14: Non-admin write requests return 403
+
+*For any* write endpoint (POST/PUT/DELETE) that requires admin role, a request made by an authenticated user with `role === "customer"` should return HTTP 403.
+
+**Validates: Requirements 5.5, 7.3, 8.6, 10.5**
+
+---
+
+### Property 15: Cart state correctly tracks items and quantities
+
+*For any* sequence of add and remove operations on the cart, the cart's `items` array and `total` should reflect the net result of those operations (adding an item increases count by 1, removing decreases by 1, total equals sum of price × quantity for all items).
+
+**Validates: Requirements 6.1**
+
+---
+
+### Property 16: New order is created with status "Pending"
+
+*For any* valid checkout payload (authenticated user, non-empty items array, totalAmount), the created Order document should have `orderStatus === "Pending"`.
+
+**Validates: Requirements 6.2**
+
+---
+
+### Property 17: Order history is scoped to the authenticated user
+
+*For any* authenticated user, GET `/api/orders/my` should return only orders where `order.userId` equals the authenticated user's `_id`, and no orders belonging to other users.
+
+**Validates: Requirements 7.1**
+
+---
+
+### Property 18: Order status follows the defined state machine sequence
+
+*For any* order, the `orderStatus` field should only transition through the sequence `"Pending" → "Brewing" → "Ready"`. An attempt to set a status outside this sequence or to skip a step should be rejected.
+
+**Validates: Requirements 7.2**
+
+---
+
+### Property 19: Redemption deducts points and creates a record
+
+*For any* authenticated customer with `totalPoints >= reward.pointsRequired`, after a successful redemption: the customer's `totalPoints` should equal `previousTotalPoints - reward.pointsRequired`, and a Redemption document should exist with the correct `userId`, `rewardId`, and `pointsUsed`.
+
+**Validates: Requirements 8.9**
+
+---
+
+### Property 20: Insufficient points prevents redemption
+
+*For any* authenticated customer where `totalPoints < reward.pointsRequired`, a redemption request should return HTTP 400, and the customer's `totalPoints` should remain unchanged.
+
+**Validates: Requirements 8.8, 8.10**
+
+---
+
+### Property 21: Reviews are scoped to their productId
+
+*For any* product with associated reviews, GET `/api/reviews/product/:productId` should return only reviews where `review.productId` equals the requested `productId`, and no reviews for other products.
+
+**Validates: Requirements 9.3**
+
+---
+
+### Property 22: Review owner can update their review
+
+*For any* review and its owner, a PUT request by the owner with a new rating and comment should return HTTP 200, and a subsequent GET should reflect the updated values.
+
+**Validates: Requirements 9.4**
+
+---
+
+### Property 23: Non-owner cannot edit or delete a review
+
+*For any* review and any authenticated user who is not the review's owner, a PUT or DELETE request should return HTTP 403, and the review should remain unchanged.
+
+**Validates: Requirements 9.6**
+
+---
+
+### Property 24: Rating outside 1–5 is rejected
+
+*For any* review submission where `rating < 1` or `rating > 5` (including non-integer values), the Review_Service should return HTTP 400 and not create a Review record.
+
+**Validates: Requirements 9.7**
+
+---
+
+### Property 25: Promo code validation respects expiry
+
+*For any* promo code that exists in the database and whose `validUntil` date is in the future, validation should return HTTP 200 with the `discountPercent`. For any promo code that does not exist or whose `validUntil` date has passed, validation should return HTTP 404.
+
+**Validates: Requirements 10.6, 10.7**
+
+---
+
+### Property 26: Error middleware returns 500 for unhandled errors
+
+*For any* unhandled error thrown within a controller (simulated via a route that throws), the error middleware should catch it and return HTTP 500 with a JSON body containing a `message` field.
+
+**Validates: Requirements 11.6**
+
+---
+
+### Property 27: File upload accepts JPEG/PNG and rejects all other types
+
+*For any* file with MIME type `image/jpeg` or `image/png`, the upload middleware should allow the request to proceed. For any file with any other MIME type, the middleware should return HTTP 400.
+
+**Validates: Requirements 12.1, 12.2**
+
+---
+
+### Property 28: Valid image upload returns an accessible URL
+
+*For any* valid JPEG or PNG image uploaded to any upload endpoint, the response should contain a URL, and a GET request to that URL should return the image with HTTP 200.
+
+**Validates: Requirements 12.3, 3.2, 5.4, 6.3, 8.12, 9.2, 10.2**
+
+---
+
+### Property 29: File upload enforces 5 MB size limit
+
+*For any* file whose size is less than or equal to 5 MB, the upload should succeed. For any file whose size exceeds 5 MB, the upload middleware should return HTTP 400.
+
+**Validates: Requirements 12.4, 12.5**
+
+---
+
+## Error Handling
+
+### Global Error Handler
+
+All controllers follow the pattern of wrapping async logic in try/catch and calling `next(err)` on failure. The `errorMiddleware` is the last middleware registered in `server.js` and handles all forwarded errors:
+
+```js
+// errorMiddleware.js
+export const errorMiddleware = (err, req, res, next) => {
+  const status = err.status || 500;
+  const message = status === 500 ? 'Internal server error' : err.message;
+  if (status === 500) console.error('[ERROR]', err);
+  res.status(status).json({ message });
+};
+```
+
+Controllers attach a `status` property to errors before forwarding them:
+
+```js
+// Example in productController.js
+const getProductById = async (req, res, next) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      const err = new Error('Product not found');
+      err.status = 404;
+      return next(err);
+    }
+    res.json(product);
+  } catch (err) {
+    next(err); // status defaults to 500
+  }
+};
+```
+
+### HTTP Status Code Conventions
+
+| Scenario | Status Code |
+|---|---|
+| Successful read | 200 |
+| Successful creation | 201 |
+| Validation error / bad input | 400 |
+| Missing or invalid JWT | 401 |
+| Insufficient role (non-admin) | 403 |
+| Resource not found | 404 |
+| Duplicate unique field (e.g. email) | 409 |
+| Unhandled server error | 500 |
+
+### Mongoose Validation Errors
+
+Mongoose `ValidationError` instances (thrown when required fields are missing or enum values are invalid) are caught in the controller's catch block. Controllers should check `err.name === 'ValidationError'` and forward with `status = 400` rather than letting them fall through to the 500 handler.
+
+### Multer Errors
+
+Multer throws `MulterError` for size limit violations and custom `Error` instances for file type rejections. The upload middleware wraps Multer to intercept these and call `next` with `status = 400`.
+
+### Client-Side Error Handling
+
+The React Native app uses Axios interceptors to handle common error responses:
+- 401 responses trigger an automatic logout and redirect to the Login screen.
+- 403 responses display an "Access denied" alert.
+- 400/404/409 responses display the `message` field from the response body.
+- Network errors (no connection) display a generic connectivity error.
+
+---
+
+## Testing Strategy
+
+### Dual Testing Approach
+
+Both unit tests and property-based tests are required. They are complementary:
+- Unit tests verify specific examples, integration points, and edge cases.
+- Property-based tests verify universal correctness across many generated inputs.
+
+### Property-Based Testing
+
+**Library**: [fast-check](https://github.com/dubzzz/fast-check) (JavaScript/TypeScript, works with Jest/Vitest)
+
+Each correctness property defined above must be implemented as a single property-based test using `fc.assert(fc.property(...))`. Tests should be configured to run a minimum of 100 iterations.
+
+**Tag format** for each test:
+```
+// Feature: ember-coffee-co, Property N: <property_text>
+```
+
+Example:
+
+```js
+// Feature: ember-coffee-co, Property 1: New user initialisation invariant
+test('new user always has role=customer and totalPoints=0', async () => {
+  await fc.assert(
+    fc.asyncProperty(
+      fc.record({
+        name:     fc.string({ minLength: 1 }),
+        email:    fc.emailAddress(),
+        password: fc.string({ minLength: 8 }),
+      }),
+      async (payload) => {
+        const res = await request(app).post('/api/auth/register').send(payload);
+        expect(res.status).toBe(201);
+        const user = await User.findOne({ email: payload.email });
+        expect(user.role).toBe('customer');
+        expect(user.totalPoints).toBe(0);
+      }
+    ),
+    { numRuns: 100 }
+  );
+});
+```
+
+**Priority property tests** (highest value, implement first):
+- P2: Password hashing (security-critical)
+- P7: JWT protection on all protected routes
+- P14: Role-based access control (non-admin → 403)
+- P19: Redemption point deduction correctness
+- P20: Insufficient points guard
+- P29: File size limit enforcement
+
+### Unit Testing
+
+**Framework**: Jest with Supertest for HTTP integration tests.
+
+Unit tests should focus on:
+- Specific examples that demonstrate correct behaviour (e.g. registering with a known email returns 409)
+- Edge cases not covered by property generators (e.g. empty items array at checkout → 400)
+- Controller logic in isolation using mocked Mongoose models
+
+**Avoid** writing unit tests that duplicate what property tests already cover (e.g. do not write 10 separate unit tests for different invalid rating values when Property 24 covers all of them).
+
+**Recommended unit test examples per module:**
+
+| Module | Key Unit Tests |
+|---|---|
+| Auth | Duplicate email → 409; login with wrong password → 401 |
+| Products | Non-existent productId → 404; customer creating product → 403 |
+| Orders | Empty items array → 400; order history for user with no orders → 200 [] |
+| Rewards | Redeem non-existent reward → 404; redeem with 0 points → 400 |
+| Reviews | Rating = 0 → 400; rating = 6 → 400; non-owner delete → 403 |
+| Promotions | Expired promo code → 404; valid promo code → 200 with discount |
+| File Upload | PDF upload → 400; 6 MB file → 400 |
+
+### Test Configuration
+
+```json
+// package.json (backend)
+{
+  "scripts": {
+    "test": "jest --runInBand --forceExit",
+    "test:run": "jest --runInBand --forceExit --passWithNoTests"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFilesAfterFramework": ["./src/test/setup.js"]
+  }
+}
+```
+
+The test setup file connects to a separate MongoDB test database (e.g. `mongodb://localhost/ember-coffee-test`) and clears all collections between tests.
