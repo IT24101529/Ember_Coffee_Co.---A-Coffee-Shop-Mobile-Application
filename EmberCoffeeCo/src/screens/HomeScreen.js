@@ -62,7 +62,14 @@ export default function HomeScreen({ navigation }) {
 
       if (promoRes.status === 'fulfilled') {
         const promos = promoRes.value.data;
-        setPromo(Array.isArray(promos) ? promos.filter(p => p.isActive !== false && new Date(p.validUntil) > new Date()) : []);
+        const now = new Date();
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        
+        setPromo(Array.isArray(promos) ? promos.filter(p => 
+          p.isActive !== false && 
+          p.showOnHome !== false && 
+          new Date(p.validUntil) >= todayStart
+        ) : []);
       }
 
       if (productsRes.status === 'fulfilled') {

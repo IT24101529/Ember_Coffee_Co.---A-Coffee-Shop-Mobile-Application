@@ -245,7 +245,8 @@ export default function AdminDashboardScreen({ navigation }) {
 
   // Derived stats
   const activeOrders    = orders.filter((o) => o.orderStatus === 'Pending' || o.orderStatus === 'Brewing').length;
-  const activePromos    = promos.filter((p) => p.isActive !== false && new Date(p.validUntil) > new Date()).length;
+  const todayStart = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+  const activePromos    = promos.filter((p) => p.isActive !== false && new Date(p.validUntil) >= todayStart).length;
   const totalInventory  = products.length;
 
   const handleSwitchToCustomer = () => {
@@ -341,10 +342,10 @@ export default function AdminDashboardScreen({ navigation }) {
               <Text style={styles.sectionCardLink}>Manage</Text>
             </TouchableOpacity>
           </View>
-          {promos.filter(p => p.isActive !== false && new Date(p.validUntil) > new Date()).length === 0 ? (
+          {promos.filter(p => p.isActive !== false && new Date(p.validUntil) >= todayStart).length === 0 ? (
             <Text style={styles.emptyText}>No active promotions.</Text>
           ) : (
-            promos.filter(p => p.isActive !== false && new Date(p.validUntil) > new Date()).map((promo) => (
+            promos.filter(p => p.isActive !== false && new Date(p.validUntil) >= todayStart).map((promo) => (
               <View key={promo._id} style={styles.promoRow}>
                 <View style={styles.promoCodePill}>
                   <Text style={styles.promoCodeText}>{promo.promoCode}</Text>
